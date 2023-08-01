@@ -12,7 +12,7 @@ import { useRecipe } from '../../utils/index.js'
 import api from '../../api'
 
 const SingleCard = ({ loadItem, updateOrders }) => {
-  const [ loading, setLoading ] = useState(true)
+  const [loading, setLoading] = useState(true)
   const {
     recipe,
     setRecipe,
@@ -26,9 +26,9 @@ const SingleCard = ({ loadItem, updateOrders }) => {
   const history = useHistory()
 
   useEffect(_ => {
-    api.getRecipe ({
-        recipe_id: id
-      })
+    api.getRecipe({
+      recipe_id: id
+    })
       .then(res => {
         setRecipe(res)
         setLoading(false)
@@ -37,7 +37,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
         history.push('/recipes')
       })
   }, [])
-  
+
   const { url } = useRouteMatch()
   const {
     author = {},
@@ -50,7 +50,11 @@ const SingleCard = ({ loadItem, updateOrders }) => {
     is_favorited,
     is_in_shopping_cart
   } = recipe
-  
+  let imagePath
+  if (recipe && image) {
+    imagePath = new URL(image)
+  }
+
   return <Main>
     <Container>
       <MetaTags>
@@ -59,18 +63,18 @@ const SingleCard = ({ loadItem, updateOrders }) => {
         <meta property="og:title" content={name} />
       </MetaTags>
       <div className={styles['single-card']}>
-        <img src={image} alt={name} className={styles["single-card__image"]} />
+        <img src={imagePath ? imagePath.pathname : image} alt={name} className={styles["single-card__image"]} />
         <div className={styles["single-card__info"]}>
           <div className={styles["single-card__header-info"]}>
-              <h1 className={styles["single-card__title"]}>{name}</h1>
-              {authContext && <Button
-                modifier='style_none'
-                clickHandler={_ => {
-                  handleLike({ id, toLike: Number(!is_favorited) })
-                }}
-              >
-                {is_favorited ? <Icons.StarBigActiveIcon /> : <Icons.StarBigIcon />}
-              </Button>}
+            <h1 className={styles["single-card__title"]}>{name}</h1>
+            {authContext && <Button
+              modifier='style_none'
+              clickHandler={_ => {
+                handleLike({ id, toLike: Number(!is_favorited) })
+              }}
+            >
+              {is_favorited ? <Icons.StarBigActiveIcon /> : <Icons.StarBigIcon />}
+            </Button>}
           </div>
           <TagsContainer tags={tags} />
           <div>
@@ -98,8 +102,8 @@ const SingleCard = ({ loadItem, updateOrders }) => {
                 handleAddToCart({ id, toAdd: Number(!is_in_shopping_cart), callback: updateOrders })
               }}
             >
-              
-            {is_in_shopping_cart ? <><Icons.DoneIcon color="#4A61DD"/>Рецепт добавлен</> : <><Icons.PlusIcon /> Добавить в покупки</>}
+
+              {is_in_shopping_cart ? <><Icons.DoneIcon color="#4A61DD" />Рецепт добавлен</> : <><Icons.PlusIcon /> Добавить в покупки</>}
             </Button>}
             {(userContext || {}).id !== author.id && authContext && <Button
               className={styles['single-card__button']}
@@ -114,7 +118,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
           <Ingredients ingredients={ingredients} />
           <Description description={text} />
         </div>
-    </div>
+      </div>
     </Container>
   </Main>
 }

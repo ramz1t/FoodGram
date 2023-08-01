@@ -4,7 +4,7 @@ import { Button } from '../index'
 import cn from 'classnames'
 
 const FileInput = ({ label, onChange, file = null, className }) => {
-  const [ currentFile, setCurrentFile ] = useState(file)
+  const [currentFile, setCurrentFile] = useState(file)
   const fileInput = useRef(null)
   useEffect(_ => {
     if (file !== currentFile) {
@@ -47,7 +47,7 @@ const FileInput = ({ label, onChange, file = null, className }) => {
       Выбрать файл
     </div>
     {currentFile && <div className={styles.image} style={{
-      backgroundImage: `url(${currentFile})`
+      backgroundImage: `url(${currentFile.includes("base64") ? currentFile : new URL(currentFile).pathname})`
     }} />}
   </div>
 }
